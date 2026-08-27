@@ -36,6 +36,8 @@
       </footer>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
     <script src="js/store.js"></script>
     <script>
       function esc(s) {
@@ -46,16 +48,18 @@
           .replace(/"/g, "&quot;");
       }
 
-      const list = document.getElementById("updates-list");
-      const items = BYC.getUpdates();
-      list.innerHTML = items.length
-        ? items
-            .map(
-              (u) =>
-                `<article class="card"><h3>${esc(u.title)}</h3><p>${esc(u.body)}</p></article>`
-            )
-            .join("")
-        : `<p class="empty">No updates yet.</p>`;
+      (async () => {
+        const list = document.getElementById("updates-list");
+        const items = await BYC.getUpdates();
+        list.innerHTML = items.length
+          ? items
+              .map(
+                (u) =>
+                  `<article class="card"><h3>${esc(u.title)}</h3><p>${esc(u.body)}</p></article>`
+              )
+              .join("")
+          : `<p class="empty">No updates yet.</p>`;
+      })();
     </script>
   </body>
 </html>
