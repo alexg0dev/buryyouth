@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Save Our Youth — saveburyyouth.com</title>
+    <meta
+      name="description"
+      content="Save Our Youth — tell me what’s happening in Bury. saveburyyouth.com"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/site.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header>
+        <p class="campaign">Save Our Youth</p>
+        <p class="domain">
+          <a href="https://saveburyyouth.com">saveburyyouth.com</a>
+        </p>
+        <p class="byline">
+          Handled by Member of Youth Parliament
+          <a href="https://ghanem.uk" target="_blank" rel="noopener noreferrer">Alexandro Ghanem</a>
+        </p>
+        <p class="side">We’re on your side.</p>
+        <p class="intro">
+          Visit
+          <a href="https://ghanem.uk/promises" target="_blank" rel="noopener noreferrer"
+            >ghanem.uk/promises</a
+          >
+          to see what I’m aiming to achieve.
+        </p>
+        <nav class="top-actions" aria-label="Site">
+          <a class="donate" href="https://ghanem.uk" target="_blank" rel="noopener noreferrer">Donate</a>
+          <a href="#speak">Send an issue</a>
+          <a href="#involve">Get involved</a>
+          <a href="updates.html">Updates</a>
+          <a href="events.html">Events</a>
+        </nav>
+      </header>
+
+      <section id="speak" class="panel">
+        <h2 class="hand">Tell me what’s happening</h2>
+        <p class="bit">This is the main thing — tell me what’s happening.</p>
+
+        <form id="suggestion-form" class="issue-form">
+          <div class="form-grid">
+            <input name="name" type="text" autocomplete="name" placeholder="Name (optional)" aria-label="Name optional" />
+            <input name="email" type="email" required autocomplete="email" placeholder="Email" aria-label="Email" />
+            <input name="area" type="text" required placeholder="Where in Bury?" aria-label="Where in Bury" />
+            <select name="topic" required aria-label="Topic">
+              <option value="" disabled selected>What’s it about?</option>
+              <option>Youth safety / knife crime</option>
+              <option>Jobs (16–18)</option>
+              <option>Cost of living</option>
+              <option>Education</option>
+              <option>Mental health / waiting times</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <textarea name="message" required placeholder="What’s going on?" aria-label="Your message"></textarea>
+          <button type="submit">Send</button>
+          <div id="form-status" hidden></div>
+        </form>
+      </section>
+
+      <div class="jump-row">
+        <a class="jump" href="updates.html">
+          <strong>Updates</strong>
+          <span>What’s being worked on</span>
+        </a>
+        <a class="jump" href="events.html">
+          <strong>Events</strong>
+          <span>Campaigns &amp; meet-ups</span>
+        </a>
+      </div>
+
+      <section id="involve" class="involve">
+        <h2 class="hand">Get involved</h2>
+        <p class="bit">
+          Email me and we’ll get your stepping stone into changing Bury.
+        </p>
+
+        <form id="join-form" class="join-form">
+          <p class="join-q">What are you campaigning for?</p>
+          <p class="join-hint">Select the issue that matters most to you.</p>
+
+          <div class="cause-list" role="radiogroup" aria-label="Campaign issue">
+            <label><input type="radio" name="cause" value="Employment &amp; Apprenticeships" required /> Employment &amp; Apprenticeships</label>
+            <label><input type="radio" name="cause" value="Education" /> Education</label>
+            <label><input type="radio" name="cause" value="Mental Health" /> Mental Health</label>
+            <label><input type="radio" name="cause" value="Youth Safety &amp; Knife Crime" /> Youth Safety &amp; Knife Crime</label>
+            <label><input type="radio" name="cause" value="Crime &amp; Anti-Social Behaviour" /> Crime &amp; Anti-Social Behaviour</label>
+            <label><input type="radio" name="cause" value="Youth Services" /> Youth Services</label>
+            <label><input type="radio" name="cause" value="Sports &amp; Activities" /> Sports &amp; Activities</label>
+            <label><input type="radio" name="cause" value="Transport" /> Transport</label>
+            <label><input type="radio" name="cause" value="Cost of Living" /> Cost of Living</label>
+            <label><input type="radio" name="cause" value="Housing &amp; Homelessness" /> Housing &amp; Homelessness</label>
+            <label><input type="radio" name="cause" value="SEND &amp; Accessibility" /> SEND &amp; Accessibility</label>
+            <label><input type="radio" name="cause" value="Equality &amp; Inclusion" /> Equality &amp; Inclusion</label>
+            <label><input type="radio" name="cause" value="Drugs &amp; Substance Misuse" /> Drugs &amp; Substance Misuse</label>
+            <label><input type="radio" name="cause" value="Online Safety" /> Online Safety</label>
+            <label><input type="radio" name="cause" value="Environment" /> Environment</label>
+            <label><input type="radio" name="cause" value="Town Centres &amp; Community Spaces" /> Town Centres &amp; Community Spaces</label>
+            <label><input type="radio" name="cause" value="Arts, Music &amp; Culture" /> Arts, Music &amp; Culture</label>
+            <label><input type="radio" name="cause" value="Young People's Voice &amp; Politics" /> Young People’s Voice &amp; Politics</label>
+            <label><input type="radio" name="cause" value="Skills &amp; Training" /> Skills &amp; Training</label>
+            <label><input type="radio" name="cause" value="Volunteering &amp; Community" /> Volunteering &amp; Community</label>
+            <label><input type="radio" name="cause" value="Health &amp; Wellbeing" /> Health &amp; Wellbeing</label>
+            <label><input type="radio" name="cause" value="Youth Facilities &amp; Safe Spaces" /> Youth Facilities &amp; Safe Spaces</label>
+            <label><input type="radio" name="cause" value="Local Development &amp; Planning" /> Local Development &amp; Planning</label>
+            <label><input type="radio" name="cause" value="Other / Suggest an Issue" /> Other / Suggest an Issue</label>
+          </div>
+
+          <div class="form-grid join-fields">
+            <input name="name" type="text" placeholder="Your name" required autocomplete="name" />
+            <input name="email" type="email" placeholder="Your email" required autocomplete="email" />
+          </div>
+          <textarea name="note" placeholder="Anything else? (optional)" rows="3"></textarea>
+          <button type="submit">Join in</button>
+          <div id="join-status" hidden></div>
+        </form>
+      </section>
+
+      <section id="donations">
+        <h2 class="hand">Recent donations</h2>
+        <p class="bit">Supports campaigning and protest work.</p>
+        <div class="donate-box">
+          <table class="donate-table" id="donations-table">
+            <thead>
+              <tr>
+                <th>From</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody id="donations-list"></tbody>
+          </table>
+          <p id="donations-empty" class="empty" hidden>No donations listed yet.</p>
+          <a class="donate donate-inline" href="https://ghanem.uk" target="_blank" rel="noopener noreferrer"
+            >Donate</a
+          >
+        </div>
+      </section>
+
+      <section id="polls">
+        <h2 class="hand">Polls</h2>
+        <div id="polls-list"></div>
+        <p id="polls-empty" class="empty" hidden>No open polls.</p>
+      </section>
+
+      <details class="focus-drop">
+        <summary>What I’m campaigning for</summary>
+        <ul>
+          <li>Youth safety &amp; knife crime</li>
+          <li>Jobs for 16–18 year olds</li>
+          <li>
+            Cost of living for younger people — support to become more financially
+            independent
+          </li>
+          <li>Education</li>
+          <li>
+            Mental health — easier access to support outside school, and reducing
+            waiting times
+          </li>
+        </ul>
+      </details>
+
+      <footer>
+        <p>
+          Handled by Member of Youth Parliament <strong>Alexandro Ghanem</strong><br />
+          Developed by
+          <a href="https://ghanem.uk" target="_blank" rel="noopener noreferrer">Alexandro Ghanem</a>
+          ·
+          <a href="https://ghanem.uk" target="_blank" rel="noopener noreferrer">ghanem.uk</a>
+          ·
+          <a href="https://saveburyyouth.com">saveburyyouth.com</a>
+        </p>
+        <p class="disclaimer">Not associated with NYA or Bury Council.</p>
+      </footer>
+    </div>
+
+    <script src="js/store.js"></script>
+    <script>
+      const form = document.getElementById("suggestion-form");
+      const statusEl = document.getElementById("form-status");
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const data = new FormData(form);
+        if (!data.get("topic")) return;
+        BYC.addSuggestion({
+          name: data.get("name"),
+          email: data.get("email"),
+          area: data.get("area"),
+          topic: data.get("topic"),
+          message: data.get("message"),
+        });
+        form.reset();
+        statusEl.hidden = false;
+        statusEl.textContent = "Got it — thanks.";
+        setTimeout(() => {
+          statusEl.hidden = true;
+        }, 3500);
+      });
+
+      const joinForm = document.getElementById("join-form");
+      const joinStatus = document.getElementById("join-status");
+      joinForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const data = new FormData(joinForm);
+        BYC.addJoin({
+          name: data.get("name"),
+          email: data.get("email"),
+          cause: data.get("cause"),
+          note: data.get("note"),
+        });
+        joinForm.reset();
+        joinStatus.hidden = false;
+        joinStatus.textContent = "Thanks — I’ll be in touch.";
+        setTimeout(() => {
+          joinStatus.hidden = true;
+        }, 4000);
+      });
+
+      function esc(s) {
+        return String(s)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      const donations = BYC.getDonations();
+      const donationsList = document.getElementById("donations-list");
+      const donationsEmpty = document.getElementById("donations-empty");
+      const donationsTable = document.getElementById("donations-table");
+      if (!donations.length) {
+        donationsEmpty.hidden = false;
+        donationsTable.hidden = true;
+      } else {
+        donationsList.innerHTML = donations
+          .map(
+            (d) => `<tr>
+              <td>${esc(d.name)}${d.note ? `<span class="donate-note-cell">${esc(d.note)}</span>` : ""}</td>
+              <td>${esc(d.amount)}</td>
+            </tr>`
+          )
+          .join("");
+      }
+
+      function renderPolls() {
+        const polls = BYC.getActivePolls();
+        const pollsList = document.getElementById("polls-list");
+        const pollsEmpty = document.getElementById("polls-empty");
+        pollsList.innerHTML = "";
+        pollsEmpty.hidden = polls.length > 0;
+
+        polls.forEach((poll) => {
+          const { tally, total } = BYC.voteTotals(poll.id);
+          const voted = BYC.hasVoted(poll.id);
+          const el = document.createElement("div");
+          el.className = "poll";
+          let body = "";
+          poll.options.forEach((opt) => {
+            const count = tally[opt.id] || 0;
+            const pct = total ? Math.round((count / total) * 100) : 0;
+            if (voted) {
+              body += `<div class="row"><span>${esc(opt.label)}</span><span>${pct}%</span></div>
+                <div class="track"><b style="width:${pct}%"></b></div>`;
+            } else {
+              body += `<button type="button" class="vote" data-p="${poll.id}" data-o="${opt.id}">${esc(opt.label)}</button>`;
+            }
+          });
+          el.innerHTML = `<h3>${esc(poll.question)}</h3>
+            <p class="meta">${voted ? "you voted" : total + " votes"}</p>${body}`;
+          pollsList.appendChild(el);
+        });
+
+        pollsList.querySelectorAll(".vote").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            if (BYC.castVote(btn.dataset.p, btn.dataset.o).ok) renderPolls();
+          });
+        });
+      }
+
+      renderPolls();
+    </script>
+  </body>
+</html>
