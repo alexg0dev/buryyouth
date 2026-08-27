@@ -233,6 +233,8 @@
       </footer>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
     <script src="js/store.js"></script>
     <script>
       const loginView = document.getElementById("login-view");
@@ -274,9 +276,9 @@
       });
 
       function bindSimpleForm(id, handler) {
-        document.getElementById(id).addEventListener("submit", (e) => {
+        document.getElementById(id).addEventListener("submit", async (e) => {
           e.preventDefault();
-          handler(new FormData(e.target));
+          await handler(new FormData(e.target));
           e.target.reset();
           refresh();
         });
@@ -301,12 +303,12 @@
         })
       );
 
-      document.getElementById("poll-form").addEventListener("submit", (e) => {
+      document.getElementById("poll-form").addEventListener("submit", async (e) => {
         e.preventDefault();
         const data = new FormData(e.target);
         const options = data.getAll("option");
         if (options.filter((o) => String(o).trim()).length < 2) return;
-        BYC.createPoll({ question: data.get("question"), options });
+        await BYC.createPoll({ question: data.get("question"), options });
         e.target.reset();
         optionFields.innerHTML =
           '<input name="option" required placeholder="Option 1" /><input name="option" required placeholder="Option 2" />';
@@ -329,36 +331,38 @@
         }
       }
 
-      function listCards(items, render, onDelete) {
+      function listCards(items, render) {
         return (
           items
-            .map((item) => {
-              return `<article class="card">${render(item)}
+            .map(
+              (item) => `<article class="card">${render(item)}
                 <div class="row" style="margin-top:0.45rem">
                   <button type="button" class="btn-bad del" data-id="${item.id}">delete</button>
                 </div>
-              </article>`;
-            })
+              </article>`
+            )
             .join("") || '<p class="muted">None.</p>'
         );
       }
 
       function wireDeletes(root, fn) {
         root.querySelectorAll(".del").forEach((b) =>
-          b.addEventListener("click", () => {
+          b.addEventListener("click", async () => {
             if (confirm("Delete?")) {
-              fn(b.dataset.id);
+              await fn(b.dataset.id);
               refresh();
             }
           })
         );
       }
 
-      function refresh() {
-        const suggestions = BYC.getSuggestions();
-        const polls = BYC.getPolls();
+      async function refresh() {
+        const suggestions = await BYC.getSuggestions();
+        const polls = await BYC.getPolls();
         let votes = 0;
-        polls.forEach((p) => (votes += BYC.voteTotals(p.id).total));
+        for (const p of polls) {
+          votes += (await BYC.voteTotals(p.id)).total;
+        }
 
         document.getElementById("stat-suggestions").textContent = suggestions.length;
         document.getElementById("stat-polls").textContent = polls.filter((p) => p.active).length;
@@ -366,14 +370,14 @@
 
         const updatesEl = document.getElementById("admin-updates");
         updatesEl.innerHTML = listCards(
-          BYC.getUpdates(),
+          await BYC.getUpdates(),
           (u) => `<h3>${esc(u.title)}</h3><p class="msg">${esc(u.body)}</p>`
         );
         wireDeletes(updatesEl, BYC.deleteUpdate);
 
         const eventsEl = document.getElementById("admin-events");
         eventsEl.innerHTML = listCards(
-          BYC.getEvents(),
+          await BYC.getEvents(),
           (ev) =>
             `<h3>${esc(ev.title)}</h3><p class="meta">${esc(ev.when)}${ev.where ? " · " + esc(ev.where) : ""}</p><p class="msg">${esc(ev.body)}</p>`
         );
@@ -381,7 +385,7 @@
 
         const donationsEl = document.getElementById("admin-donations");
         donationsEl.innerHTML = listCards(
-          BYC.getDonations(),
+          await BYC.getDonations(),
           (d) =>
             `<h3>${esc(d.name)} · ${esc(d.amount)}</h3>${d.note ? `<p class="msg">${esc(d.note)}</p>` : ""}`
         );
@@ -389,7 +393,7 @@
 
         const joinsEl = document.getElementById("admin-joins");
         joinsEl.innerHTML = listCards(
-          BYC.getJoins(),
+          await BYC.getJoins(),
           (j) =>
             `<h3>${esc(j.name)}</h3>
              <p class="meta">${esc(j.cause)} · ${when(j.createdAt)}</p>
@@ -399,18 +403,17 @@
         wireDeletes(joinsEl, BYC.deleteJoin);
 
         const pollsEl = document.getElementById("admin-polls");
-        pollsEl.innerHTML =
-          polls
-            .map((poll) => {
-              const { tally, total } = BYC.voteTotals(poll.id);
-              const rows = poll.options
-                .map((o) => {
-                  const c = tally[o.id] || 0;
-                  const pct = total ? Math.round((c / total) * 100) : 0;
-                  return `<li><span>${esc(o.label)}</span><span>${c} (${pct}%)</span></li>`;
-                })
-                .join("");
-              return `<article class="card">
+        const pollCards = [];
+        for (const poll of polls) {
+          const { tally, total } = await BYC.voteTotals(poll.id);
+          const rows = poll.options
+            .map((o) => {
+              const c = tally[o.id] || 0;
+              const pct = total ? Math.round((c / total) * 100) : 0;
+              return `<li><span>${esc(o.label)}</span><span>${c} (${pct}%)</span></li>`;
+            })
+            .join("");
+          pollCards.push(`<article class="card">
                 <h3>${esc(poll.question)}</h3>
                 <p class="meta">${when(poll.createdAt)} · ${total} votes · ${poll.active ? "open" : "closed"}</p>
                 <div class="row">
@@ -418,20 +421,20 @@
                   <button type="button" class="btn-bad del-poll" data-id="${poll.id}">delete</button>
                 </div>
                 <ul>${rows}</ul>
-              </article>`;
-            })
-            .join("") || '<p class="muted">No polls.</p>';
+              </article>`);
+        }
+        pollsEl.innerHTML = pollCards.join("") || '<p class="muted">No polls.</p>';
 
         pollsEl.querySelectorAll(".toggle-poll").forEach((b) =>
-          b.addEventListener("click", () => {
-            BYC.setPollActive(b.dataset.id, b.dataset.on !== "true");
+          b.addEventListener("click", async () => {
+            await BYC.setPollActive(b.dataset.id, b.dataset.on !== "true");
             refresh();
           })
         );
         pollsEl.querySelectorAll(".del-poll").forEach((b) =>
-          b.addEventListener("click", () => {
+          b.addEventListener("click", async () => {
             if (confirm("Delete poll?")) {
-              BYC.deletePoll(b.dataset.id);
+              await BYC.deletePoll(b.dataset.id);
               refresh();
             }
           })
@@ -456,15 +459,15 @@
           .join("");
 
         sugEl.querySelectorAll(".status-btn").forEach((b) =>
-          b.addEventListener("click", () => {
-            BYC.updateSuggestionStatus(b.dataset.id, b.dataset.v);
+          b.addEventListener("click", async () => {
+            await BYC.updateSuggestionStatus(b.dataset.id, b.dataset.v);
             refresh();
           })
         );
         sugEl.querySelectorAll(".del-sug").forEach((b) =>
-          b.addEventListener("click", () => {
+          b.addEventListener("click", async () => {
             if (confirm("Delete?")) {
-              BYC.deleteSuggestion(b.dataset.id);
+              await BYC.deleteSuggestion(b.dataset.id);
               refresh();
             }
           })
