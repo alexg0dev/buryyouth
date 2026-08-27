@@ -1,28 +1,27 @@
-# Bury Youth Cabinet
+# Save Our Youth
 
-Public site for young people across Bury to share concerns and vote on Youth Cabinet polls — so those voices can be pushed forward to Bury Council and beyond.
+Public site: [saveburyyouth.com](https://saveburyyouth.com)
 
-**Developed by [Alexandro Ghanem](https://ghanem.uk)** · [ghanem.uk](https://ghanem.uk)
+**Handled by Member of Youth Parliament Alexandro Ghanem** · [ghanem.uk](https://ghanem.uk)
 
-## Pages
-
-- `index.html` — public site (suggestions + live polls)
-- `admin.html` — dashboard to create polls, view votes, and manage suggestions
-
-## Admin
-
-Admin password: set in `js/store.js`
-
-Data is stored in the browser via `localStorage` (no backend required).
-
-## Run locally
-
-Open `index.html` in a browser, or serve the folder:
-
-```bash
-npx serve .
-```
+Not associated with NYA or Bury Council.
 
 ## Stack
 
-HTML · Tailwind CSS (CDN) · vanilla JavaScript
+HTML · CSS · vanilla JS · optional [Supabase](https://supabase.com)
+
+## Supabase
+
+1. Create or free up a Supabase project (free tier has a project limit).
+2. Run `supabase/schema.sql` in the SQL editor.
+3. Put your project URL + anon key in `js/config.js`.
+
+Until config is filled, the site uses browser `localStorage`.
+
+## Admin
+
+Open `admin.html` (password in `js/store.js`).
+
+## Poll
+
+Default question: **What should be prioritised for Bury's youth?**
