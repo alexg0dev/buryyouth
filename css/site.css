@@ -1,0 +1,548 @@
+body {
+  margin: 0;
+  font: 17px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: #111;
+  background: #fffef8;
+  background-image: repeating-linear-gradient(
+    transparent,
+    transparent 27px,
+    #e8eef5 28px
+  );
+  background-attachment: fixed;
+}
+
+.page {
+  position: relative;
+  max-width: 36rem;
+  margin: 0 auto;
+  padding: 1.15rem 1rem 2.75rem 1.4rem;
+}
+
+.page::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0.55rem;
+  width: 2px;
+  background: #f5a8a8;
+  pointer-events: none;
+}
+
+.hand {
+  font-family: Caveat, "Segoe Print", cursive;
+  font-weight: 700;
+  line-height: 1.05;
+}
+
+header {
+  padding-bottom: 1rem;
+  margin-bottom: 1.35rem;
+  border-bottom: 3px solid #111;
+}
+
+.campaign {
+  display: inline-block;
+  margin: 0;
+  padding: 0.12em 0.32em;
+  border: 2px solid #111;
+  background: #ff5c5c;
+  color: #fff;
+  font-family: Caveat, cursive;
+  font-size: clamp(1.9rem, 8vw, 2.4rem);
+  transform: rotate(-2deg);
+}
+
+.domain {
+  margin: 0.55rem 0 0;
+  font-weight: 700;
+}
+
+.domain a {
+  color: #111;
+  text-decoration: none;
+  background: #ffe566;
+  padding: 0 0.18em;
+}
+
+.byline {
+  margin: 0.45rem 0 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.intro {
+  margin: 0.55rem 0 0;
+  color: #222;
+}
+
+.intro a {
+  color: #0b57d0;
+  font-weight: 700;
+}
+
+.side {
+  margin: 0.55rem 0 0;
+  font-family: Caveat, cursive;
+  font-size: 1.55rem;
+  font-weight: 700;
+  transform: rotate(-1deg);
+  display: inline-block;
+  background: #ffe566;
+  padding: 0 0.25em;
+}
+
+.top-actions {
+  margin-top: 0.95rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem 0.75rem;
+  align-items: center;
+}
+
+.top-actions a:not(.donate) {
+  color: #0b57d0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.top-actions a:not(.donate):hover {
+  text-decoration: underline;
+}
+
+.donate {
+  display: inline-block;
+  padding: 0.5rem 0.9rem;
+  border: 2px solid #111;
+  background: #7dffb3;
+  color: #111;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.donate:active {
+  translate: 1px 1px;
+}
+
+.back {
+  display: inline-block;
+  margin-bottom: 0.75rem;
+  color: #0b57d0;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+section {
+  margin-top: 1.65rem;
+}
+
+.panel {
+  padding-bottom: 0.25rem;
+}
+
+h2 {
+  margin: 0 0 0.35rem;
+  font-size: 1.85rem;
+}
+
+.bit {
+  margin: 0 0 0.85rem;
+  color: #333;
+  font-size: 0.98rem;
+}
+
+.jump-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.55rem;
+  margin-top: 1.35rem;
+}
+
+@media (max-width: 420px) {
+  .jump-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.jump {
+  display: block;
+  padding: 0.75rem 0.8rem;
+  border: 2px solid #111;
+  background: #fff;
+  color: inherit;
+  text-decoration: none;
+}
+
+.jump strong {
+  display: block;
+  font-family: Caveat, cursive;
+  font-size: 1.45rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.jump span {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.88rem;
+  color: #555;
+}
+
+.jump:hover {
+  background: #fff3b0;
+}
+
+.issue-form .form-grid,
+.join-form .form-grid {
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 520px) {
+  .issue-form .form-grid,
+  .join-form .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.issue-form input,
+.issue-form select,
+.issue-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.7rem 0.75rem;
+  border: 2px solid #111;
+  background: #fff;
+  font: inherit;
+  margin: 0;
+}
+
+.issue-form textarea {
+  margin-top: 0.5rem;
+  min-height: 7rem;
+  resize: vertical;
+}
+
+.issue-form button,
+button.vote,
+.vote {
+  display: inline-block;
+  margin-top: 0.65rem;
+  padding: 0.68rem 1rem;
+  border: 2px solid #111;
+  background: #ffe566;
+  color: #111;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.issue-form button:active,
+.vote:active,
+.donate:active {
+  translate: 1px 1px;
+}
+
+#form-status {
+  margin: 0.45rem 0 0;
+  font-weight: 700;
+  color: #0a7a3e;
+}
+
+.donate-box {
+  border: 2px solid #111;
+  background: #fff;
+  padding: 0.65rem 0.75rem 0.85rem;
+}
+
+.donate-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.donate-table th {
+  text-align: left;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #666;
+  padding: 0.25rem 0.35rem 0.45rem;
+  border-bottom: 2px solid #111;
+}
+
+.donate-table td {
+  padding: 0.55rem 0.35rem;
+  border-bottom: 1px dashed #ccc;
+  vertical-align: top;
+}
+
+.donate-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.donate-table td:last-child {
+  font-weight: 700;
+  white-space: nowrap;
+  text-align: right;
+}
+
+.donate-note-cell {
+  display: block;
+  font-weight: 400;
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 0.1rem;
+}
+
+.donate-inline {
+  margin-top: 0.75rem;
+}
+
+.involve {
+  margin-top: 1.5rem;
+  padding: 0.95rem 1rem 1.05rem;
+  border: 2px solid #111;
+  background: #fff3b0;
+}
+
+.involve h2 {
+  margin: 0 0 0.3rem;
+}
+
+.involve .bit {
+  margin-bottom: 0.65rem;
+}
+
+.join-q {
+  margin: 0.7rem 0 0.15rem;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.join-hint {
+  margin: 0 0 0.5rem;
+  font-size: 0.92rem;
+  color: #444;
+}
+
+.cause-list {
+  display: grid;
+  gap: 0.15rem;
+  max-height: 14.5rem;
+  overflow: auto;
+  padding: 0.4rem 0.45rem;
+  border: 2px solid #111;
+  background: #fff;
+}
+
+.cause-list label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0.32rem 0.2rem;
+  font-weight: 500;
+  font-size: 0.92rem;
+  cursor: pointer;
+  border-radius: 2px;
+}
+
+.cause-list label:hover {
+  background: #fff8d6;
+}
+
+.cause-list input {
+  margin-top: 0.2rem;
+  flex-shrink: 0;
+}
+
+.join-fields {
+  margin-top: 0.7rem;
+}
+
+.join-form input[type="text"],
+.join-form input[type="email"],
+.join-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.65rem 0.7rem;
+  border: 2px solid #111;
+  background: #fff;
+  font: inherit;
+}
+
+.join-form textarea {
+  margin-top: 0.5rem;
+  resize: vertical;
+}
+
+.join-form button {
+  display: inline-block;
+  margin-top: 0.65rem;
+  padding: 0.68rem 1rem;
+  border: 2px solid #111;
+  background: #7dffb3;
+  color: #111;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.join-form button:active {
+  translate: 1px 1px;
+}
+
+#join-status {
+  margin: 0.45rem 0 0;
+  font-weight: 700;
+  color: #0a7a3e;
+}
+
+.card {
+  margin: 0.55rem 0;
+  padding: 0.75rem 0.85rem;
+  border: 2px solid #111;
+  background: #fff;
+}
+
+.card h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.card p {
+  margin: 0.35rem 0 0;
+  color: #333;
+  font-size: 0.96rem;
+}
+
+.card .meta,
+.meta {
+  margin: 0.2rem 0 0;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.poll {
+  margin-top: 0.9rem;
+  padding-top: 0.7rem;
+  border-top: 1px dashed #999;
+}
+
+.poll:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.poll h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.vote {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: left;
+  background: #fff;
+  margin-top: 0.4rem;
+}
+
+.vote:hover {
+  background: #fff3b0;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-top: 0.45rem;
+}
+
+.track {
+  height: 8px;
+  margin-top: 0.2rem;
+  border: 1px solid #111;
+  background: #ddd;
+}
+
+.track > b {
+  display: block;
+  height: 100%;
+  background: #0b57d0;
+}
+
+.empty {
+  color: #666;
+  font-size: 0.95rem;
+}
+
+footer {
+  margin-top: 2rem;
+  padding-top: 0.9rem;
+  border-top: 3px solid #111;
+  font-size: 0.92rem;
+}
+
+footer a {
+  color: #0b57d0;
+  font-weight: 700;
+}
+
+.disclaimer {
+  margin-top: 0.65rem;
+  font-size: 0.88rem;
+  color: #555;
+}
+
+.focus-drop {
+  margin-top: 1.75rem;
+  border: 2px solid #111;
+  background: #fff;
+}
+
+.focus-drop summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 0.75rem 0.85rem;
+  font-weight: 700;
+  font-size: 1rem;
+  user-select: none;
+}
+
+.focus-drop summary::-webkit-details-marker {
+  display: none;
+}
+
+.focus-drop summary::after {
+  content: " +";
+  float: right;
+  font-weight: 700;
+}
+
+.focus-drop[open] summary::after {
+  content: " –";
+}
+
+.focus-drop ul {
+  margin: 0;
+  padding: 0 0.85rem 0.85rem 1.9rem;
+}
+
+.focus-drop li {
+  margin: 0.3rem 0;
+}
+
+@media (max-width: 420px) {
+  .donate,
+  .issue-form button[type="submit"],
+  .join-form button {
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
+  }
+}
