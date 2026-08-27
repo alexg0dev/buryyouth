@@ -184,16 +184,18 @@
       </footer>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
     <script src="js/store.js"></script>
     <script>
       const form = document.getElementById("suggestion-form");
       const statusEl = document.getElementById("form-status");
 
-      form.addEventListener("submit", (e) => {
+      form.addEventListener("submit", async (e) => {
         e.preventDefault();
         const data = new FormData(form);
         if (!data.get("topic")) return;
-        BYC.addSuggestion({
+        await BYC.addSuggestion({
           name: data.get("name"),
           email: data.get("email"),
           area: data.get("area"),
@@ -210,10 +212,10 @@
 
       const joinForm = document.getElementById("join-form");
       const joinStatus = document.getElementById("join-status");
-      joinForm.addEventListener("submit", (e) => {
+      joinForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         const data = new FormData(joinForm);
-        BYC.addJoin({
+        await BYC.addJoin({
           name: data.get("name"),
           email: data.get("email"),
           cause: data.get("cause"),
@@ -235,33 +237,36 @@
           .replace(/"/g, "&quot;");
       }
 
-      const donations = BYC.getDonations();
-      const donationsList = document.getElementById("donations-list");
-      const donationsEmpty = document.getElementById("donations-empty");
-      const donationsTable = document.getElementById("donations-table");
-      if (!donations.length) {
-        donationsEmpty.hidden = false;
-        donationsTable.hidden = true;
-      } else {
-        donationsList.innerHTML = donations
-          .map(
-            (d) => `<tr>
-              <td>${esc(d.name)}${d.note ? `<span class="donate-note-cell">${esc(d.note)}</span>` : ""}</td>
-              <td>${esc(d.amount)}</td>
-            </tr>`
-          )
-          .join("");
+      async function boot() {
+        const donations = await BYC.getDonations();
+        const donationsList = document.getElementById("donations-list");
+        const donationsEmpty = document.getElementById("donations-empty");
+        const donationsTable = document.getElementById("donations-table");
+        if (!donations.length) {
+          donationsEmpty.hidden = false;
+          donationsTable.hidden = true;
+        } else {
+          donationsList.innerHTML = donations
+            .map(
+              (d) => `<tr>
+                <td>${esc(d.name)}${d.note ? `<span class="donate-note-cell">${esc(d.note)}</span>` : ""}</td>
+                <td>${esc(d.amount)}</td>
+              </tr>`
+            )
+            .join("");
+        }
+        await renderPolls();
       }
 
-      function renderPolls() {
-        const polls = BYC.getActivePolls();
+      async function renderPolls() {
+        const polls = await BYC.getActivePolls();
         const pollsList = document.getElementById("polls-list");
         const pollsEmpty = document.getElementById("polls-empty");
         pollsList.innerHTML = "";
         pollsEmpty.hidden = polls.length > 0;
 
-        polls.forEach((poll) => {
-          const { tally, total } = BYC.voteTotals(poll.id);
+        for (const poll of polls) {
+          const { tally, total } = await BYC.voteTotals(poll.id);
           const voted = BYC.hasVoted(poll.id);
           const el = document.createElement("div");
           el.className = "poll";
@@ -279,16 +284,17 @@
           el.innerHTML = `<h3>${esc(poll.question)}</h3>
             <p class="meta">${voted ? "you voted" : total + " votes"}</p>${body}`;
           pollsList.appendChild(el);
-        });
+        }
 
         pollsList.querySelectorAll(".vote").forEach((btn) => {
-          btn.addEventListener("click", () => {
-            if (BYC.castVote(btn.dataset.p, btn.dataset.o).ok) renderPolls();
+          btn.addEventListener("click", async () => {
+            const result = await BYC.castVote(btn.dataset.p, btn.dataset.o);
+            if (result.ok) renderPolls();
           });
         });
       }
 
-      renderPolls();
+      boot();
     </script>
   </body>
 </html>
