@@ -36,6 +36,8 @@
       </footer>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
     <script src="js/store.js"></script>
     <script>
       function esc(s) {
@@ -46,19 +48,21 @@
           .replace(/"/g, "&quot;");
       }
 
-      const list = document.getElementById("events-list");
-      const items = BYC.getEvents();
-      list.innerHTML = items.length
-        ? items
-            .map(
-              (ev) => `<article class="card">
-                <h3>${esc(ev.title)}</h3>
-                <p class="meta">${esc(ev.when)}${ev.where ? " · " + esc(ev.where) : ""}</p>
-                <p>${esc(ev.body)}</p>
-              </article>`
-            )
-            .join("")
-        : `<p class="empty">No events posted yet.</p>`;
+      (async () => {
+        const list = document.getElementById("events-list");
+        const items = await BYC.getEvents();
+        list.innerHTML = items.length
+          ? items
+              .map(
+                (ev) => `<article class="card">
+                  <h3>${esc(ev.title)}</h3>
+                  <p class="meta">${esc(ev.when)}${ev.where ? " · " + esc(ev.where) : ""}</p>
+                  <p>${esc(ev.body)}</p>
+                </article>`
+              )
+              .join("")
+          : `<p class="empty">No events posted yet.</p>`;
+      })();
     </script>
   </body>
 </html>
