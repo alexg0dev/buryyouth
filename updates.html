@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Updates — Save Our Youth</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/site.css" />
+  </head>
+  <body>
+    <div class="page">
+      <a class="back" href="index.html">← Home</a>
+      <header>
+        <p class="campaign">Save Our Youth</p>
+        <h1 class="hand" style="font-size: 2.2rem; margin: 0.5rem 0 0">Updates</h1>
+        <p class="byline">
+          Handled by Member of Youth Parliament
+          <a href="https://ghanem.uk" target="_blank" rel="noopener noreferrer">Alexandro Ghanem</a>
+        </p>
+      </header>
+
+      <div id="updates-list"></div>
+
+      <footer>
+        <p>
+          <a href="index.html">Home</a> ·
+          <a href="events.html">Events</a> ·
+          <a href="https://ghanem.uk" target="_blank" rel="noopener noreferrer">ghanem.uk</a>
+        </p>
+        <p class="disclaimer">Not associated with NYA or Bury Council.</p>
+      </footer>
+    </div>
+
+    <script src="js/store.js"></script>
+    <script>
+      function esc(s) {
+        return String(s)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      const list = document.getElementById("updates-list");
+      const items = BYC.getUpdates();
+      list.innerHTML = items.length
+        ? items
+            .map(
+              (u) =>
+                `<article class="card"><h3>${esc(u.title)}</h3><p>${esc(u.body)}</p></article>`
+            )
+            .join("")
+        : `<p class="empty">No updates yet.</p>`;
+    </script>
+  </body>
+</html>
