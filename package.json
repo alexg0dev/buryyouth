@@ -1,0 +1,13 @@
+{
+  "name": "byc-checkout",
+  "private": true,
+  "description": "Creates payment Checkout Sessions. Deploy this Node process on Railway. Static HTML is hosted separately.",
+  "main": "server/index.js",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node server/index.js"
+  }
+}

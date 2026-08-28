@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Donate | Save Our Youth</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/site.css" />
+  </head>
+  <body>
+    <div class="page">
+      <a class="back" href="donations.html">← Donate</a>
+      <header>
+        <p class="campaign">Save Our Youth</p>
+        <h1 class="hand">Give</h1>
+        <p class="bit">Support campaigning in Bury.</p>
+        <nav class="top-actions" aria-label="Site">
+          <a href="index.html">Home</a>
+          <a href="campaigns.html">Campaigns</a>
+          <a href="updates.html">Updates</a>
+          <a href="events.html">Events</a>
+          <a href="login.html">Login</a>
+        </nav>
+      </header>
+
+      <p id="checkout-cancelled" class="setup-notice" hidden>Payment cancelled. You can try again.</p>
+
+      <section class="stripe-panel" id="checkout-panel">
+        <div class="auth-tabs" role="tablist" aria-label="Gift type">
+          <button type="button" class="auth-tab is-active" id="plan-oneoff" role="tab" aria-selected="true">
+            One-off
+          </button>
+          <button type="button" class="auth-tab" id="plan-monthly" role="tab" aria-selected="false">
+            Monthly
+          </button>
+        </div>
+        <p class="bit" id="plan-hint">A single gift.</p>
+
+        <div id="amount-block">
+          <p class="bit" style="margin-bottom: 0.35rem">Amount</p>
+          <div class="amount-row" role="group" aria-label="Suggested amounts">
+            <button type="button" class="amount-btn" data-amount="5">£5</button>
+            <button type="button" class="amount-btn is-on" data-amount="10">£10</button>
+            <button type="button" class="amount-btn" data-amount="20">£20</button>
+            <button type="button" class="amount-btn" data-amount="50">£50</button>
+          </div>
+          <label class="checkout-custom">
+            Other
+            <input
+              id="amount-custom"
+              type="number"
+              min="1"
+              max="5000"
+              step="0.01"
+              inputmode="decimal"
+              placeholder="£"
+              aria-label="Other amount in pounds"
+            />
+          </label>
+        </div>
+
+        <p class="bit pay-method-heading" id="pay-method-heading">Pay with</p>
+        <div class="pay-method-row" role="radiogroup" aria-labelledby="pay-method-heading">
+          <button
+            type="button"
+            class="pay-method is-on"
+            id="pay-card"
+            role="radio"
+            aria-checked="true"
+            data-method="card"
+          >
+            <span class="pay-method-mark" aria-hidden="true">
+              <img src="img/pay-card.svg" alt="" width="56" height="36" />
+            </span>
+            <span class="pay-method-label">Card</span>
+          </button>
+          <button
+            type="button"
+            class="pay-method is-unavailable"
+            id="pay-apple"
+            role="radio"
+            aria-checked="false"
+            aria-disabled="true"
+            aria-describedby="pay-apple-note"
+            data-method="apple_pay"
+            disabled
+          >
+            <span class="pay-method-mark pay-method-mark-apple" aria-hidden="true">
+              <img src="img/pay-apple-pay.svg" alt="" width="96" height="36" />
+            </span>
+            <span class="pay-method-label">Apple Pay</span>
+            <span class="pay-method-note" id="pay-apple-note">Not available on this device</span>
+          </button>
+        </div>
+
+        <button type="button" class="donate stripe-btn checkout-go" id="checkout-go">Donate</button>
+        <p id="checkout-status" class="status" hidden></p>
+        <p class="stripe-note" id="pay-hint" hidden></p>
+      </section>
+
+      <p id="checkout-setup-notice" class="setup-notice" hidden>Donations aren't available yet.</p>
+
+      <footer>
+        <div class="foot-contacts">
+          <div class="foot-contact">
+            <span class="foot-contact-label">Updates and involvement</span>
+            <a href="mailto:alexusghh@gmail.com">alexusghh@gmail.com</a>
+          </div>
+          <div class="foot-contact">
+            <span class="foot-contact-label">Partners</span>
+            <a href="mailto:alexandroghanem@gmail.com">alexandroghanem@gmail.com</a>
+          </div>
+        </div>
+        <p class="disclaimer">Not associated with NYA or Bury Council.</p>
+      </footer>
+    </div>
+
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="js/config.js"></script>
+    <script src="js/donate-checkout.js" defer></script>
+  </body>
+</html>

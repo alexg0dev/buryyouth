@@ -7,472 +7,152 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap" rel="stylesheet" />
-    <style>
-      body {
-        margin: 0;
-        font: 16px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
-        color: #111;
-        background: #fffef8;
-      }
-      .page {
-        max-width: 38rem;
-        margin: 0 auto;
-        padding: 1rem 1rem 2.5rem;
-      }
-      .hand {
-        font-family: Caveat, cursive;
-        font-weight: 700;
-      }
-      h1 {
-        font-size: 2.2rem;
-        margin: 0.4rem 0 0;
-      }
-      h2 {
-        font-size: 1.7rem;
-        margin: 1.6rem 0 0.45rem;
-      }
-      a {
-        color: #0b57d0;
-      }
-      .muted {
-        color: #555;
-      }
-      input,
-      button,
-      textarea {
-        font: inherit;
-      }
-      input,
-      textarea {
-        width: 100%;
-        box-sizing: border-box;
-        padding: 0.55rem 0.65rem;
-        border: 2px solid #111;
-        background: #fff;
-        margin-top: 0.2rem;
-      }
-      label {
-        display: block;
-        margin: 0.65rem 0;
-        font-weight: 600;
-      }
-      button {
-        padding: 0.5rem 0.8rem;
-        border: 2px solid #111;
-        background: #ffe566;
-        font-weight: 700;
-        cursor: pointer;
-      }
-      .btn-ghost {
-        background: #fff;
-      }
-      .btn-bad {
-        background: #fff;
-        color: #9b1c1c;
-      }
-      .row {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.4rem;
-        align-items: center;
-      }
-      .stats {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 0.4rem;
-        margin: 1rem 0;
-      }
-      @media (max-width: 480px) {
-        .stats {
-          grid-template-columns: 1fr;
-        }
-      }
-      .stat {
-        border: 2px solid #111;
-        background: #fff;
-        padding: 0.55rem 0.7rem;
-      }
-      .stat b {
-        display: block;
-        font-family: Caveat, cursive;
-        font-size: 1.7rem;
-        line-height: 1;
-      }
-      .card {
-        border: 2px solid #111;
-        background: #fff;
-        padding: 0.8rem;
-        margin: 0.55rem 0;
-      }
-      .card h3 {
-        margin: 0;
-        font-size: 1.02rem;
-      }
-      .meta {
-        margin: 0.2rem 0;
-        font-size: 0.85rem;
-        color: #555;
-      }
-      .msg {
-        white-space: pre-wrap;
-        margin: 0.45rem 0;
-      }
-      ul {
-        margin: 0.5rem 0 0;
-        padding: 0;
-        list-style: none;
-      }
-      li {
-        display: flex;
-        justify-content: space-between;
-        gap: 0.5rem;
-        font-size: 0.9rem;
-        padding: 0.15rem 0;
-      }
-      #login-error {
-        color: #9b1c1c;
-        font-weight: 700;
-      }
-      footer {
-        margin-top: 2rem;
-        padding-top: 0.75rem;
-        border-top: 2px solid #111;
-        font-size: 0.9rem;
-      }
-      .disclaimer {
-        color: #555;
-        font-size: 0.85rem;
-      }
-    </style>
+    <link rel="stylesheet" href="css/site.css" />
   </head>
   <body>
-    <div id="login-view" class="page">
-      <a href="index.html">← site</a>
-      <h1 class="hand">Admin</h1>
-      <p class="muted">Save Our Youth</p>
-      <form id="login-form">
-        <label>Password <input id="password" type="password" required /></label>
-        <p id="login-error" hidden>Nope.</p>
-        <button type="submit">Sign in</button>
-      </form>
-    </div>
-
-    <div id="dash-view" class="page" hidden>
-      <div class="row" style="justify-content: space-between">
-        <div>
-          <h1 class="hand" style="font-size: 2rem; margin: 0">Dashboard</h1>
-          <p class="muted" style="margin: 0">saveburyyouth.com</p>
-        </div>
-        <div class="row">
-          <a href="index.html">home</a>
-          <a href="updates.html">updates</a>
-          <a href="events.html">events</a>
-          <button type="button" id="logout-btn" class="btn-ghost">log out</button>
-        </div>
+    <div class="page page-admin">
+      <div id="login-view">
+        <a class="back" href="index.html">← Home</a>
+        <header>
+          <p class="campaign">Save Our Youth</p>
+          <h1 class="hand">Admin</h1>
+          <p class="bit">Sign in to manage the site.</p>
+        </header>
+        <form id="login-form" class="issue-form form-box admin-login" method="post" action="#">
+          <input id="password" type="password" required autocomplete="current-password" placeholder="Password" aria-label="Password" />
+          <p id="login-error" class="status status-err" hidden>Wrong password.</p>
+          <button type="submit">Sign in</button>
+        </form>
       </div>
 
-      <div class="stats">
-        <div class="stat"><span class="muted">issues</span><b id="stat-suggestions">0</b></div>
-        <div class="stat"><span class="muted">polls</span><b id="stat-polls">0</b></div>
-        <div class="stat"><span class="muted">votes</span><b id="stat-votes">0</b></div>
-      </div>
-
-      <h2 class="hand">Add update</h2>
-      <form id="update-form">
-        <label>Title <input name="title" required /></label>
-        <label>Details <textarea name="body" required rows="3"></textarea></label>
-        <button type="submit">Post update</button>
-      </form>
-      <div id="admin-updates"></div>
-
-      <h2 class="hand">Add event</h2>
-      <form id="event-form">
-        <label>Title <input name="title" required /></label>
-        <label>When <input name="when" required placeholder="Sat 12 Apr, 2pm" /></label>
-        <label>Where <input name="where" placeholder="Bury town centre" /></label>
-        <label>Details <textarea name="body" rows="2"></textarea></label>
-        <button type="submit">Post event</button>
-      </form>
-      <div id="admin-events"></div>
-
-      <h2 class="hand">Add donation</h2>
-      <form id="donation-form">
-        <label>Name <input name="name" placeholder="Anonymous" /></label>
-        <label>Amount <input name="amount" required placeholder="£5" /></label>
-        <label>Note <input name="note" placeholder="optional" /></label>
-        <button type="submit">Add donation</button>
-      </form>
-      <div id="admin-donations"></div>
-
-      <h2 class="hand">Get involved sign-ups</h2>
-      <div id="admin-joins"></div>
-
-      <h2 class="hand">New poll</h2>
-      <form id="poll-form">
-        <label>Question <input name="question" required /></label>
-        <label
-          >Options
-          <div id="option-fields" style="display: grid; gap: 0.35rem; margin-top: 0.25rem">
-            <input name="option" required placeholder="Option 1" />
-            <input name="option" required placeholder="Option 2" />
+      <div id="dash-view" hidden>
+        <a class="back" href="index.html">← Home</a>
+        <header class="admin-head">
+          <div>
+            <p class="campaign">Save Our Youth</p>
+            <h1 class="hand">Dashboard</h1>
+            <p class="bit">saveburyyouth.com</p>
           </div>
-        </label>
-        <button type="button" id="add-option" class="btn-ghost">+ option</button>
-        <div style="margin-top: 0.55rem"><button type="submit">Publish</button></div>
-      </form>
-      <div id="admin-polls"></div>
+          <button type="button" id="logout-btn" class="text-btn">Sign out</button>
+        </header>
 
-      <h2 class="hand">Issues sent in</h2>
-      <div id="admin-suggestions"></div>
-      <p id="suggestions-empty" class="muted" hidden>None yet.</p>
+        <nav class="admin-tabs" role="tablist" aria-label="Dashboard">
+          <button type="button" class="admin-tab is-active" role="tab" aria-selected="true" data-tab="overview">Overview</button>
+          <button type="button" class="admin-tab" role="tab" aria-selected="false" data-tab="issues">Issues</button>
+          <button type="button" class="admin-tab" role="tab" aria-selected="false" data-tab="contacts">Contacts</button>
+          <button type="button" class="admin-tab" role="tab" aria-selected="false" data-tab="donations">Donations</button>
+          <button type="button" class="admin-tab" role="tab" aria-selected="false" data-tab="campaigns">Campaigns</button>
+          <button type="button" class="admin-tab" role="tab" aria-selected="false" data-tab="updates">Updates</button>
+          <button type="button" class="admin-tab" role="tab" aria-selected="false" data-tab="events">Events</button>
+          <button type="button" class="admin-tab" role="tab" aria-selected="false" data-tab="polls">Polls</button>
+        </nav>
+
+        <div id="panel-overview" class="admin-panel" role="tabpanel">
+          <div class="admin-stats">
+            <button type="button" class="admin-stat" data-tab="issues"><span>Issues</span><b id="stat-issues">0</b></button>
+            <button type="button" class="admin-stat" data-tab="contacts"><span>Contacts</span><b id="stat-contacts">0</b></button>
+            <button type="button" class="admin-stat" data-tab="donations"><span>Donations</span><b id="stat-donations">0</b></button>
+            <button type="button" class="admin-stat" data-tab="campaigns"><span>Sign-ups</span><b id="stat-joins">0</b></button>
+            <button type="button" class="admin-stat" data-tab="updates"><span>Updates</span><b id="stat-updates">0</b></button>
+            <button type="button" class="admin-stat" data-tab="events"><span>Events</span><b id="stat-events">0</b></button>
+            <button type="button" class="admin-stat" data-tab="polls"><span>Open polls</span><b id="stat-polls">0</b></button>
+            <button type="button" class="admin-stat" data-tab="polls"><span>Votes</span><b id="stat-votes">0</b></button>
+          </div>
+          <h2 class="hand" style="margin-top: 1.4rem">Recent issues</h2>
+          <div id="overview-issues"></div>
+          <h2 class="hand">Recent donations</h2>
+          <div id="overview-donations"></div>
+        </div>
+
+        <div id="panel-issues" class="admin-panel" role="tabpanel" hidden>
+          <h2 class="hand">Issues</h2>
+          <p class="bit">Messages sent in from the site.</p>
+          <div id="admin-issues"></div>
+        </div>
+
+        <div id="panel-contacts" class="admin-panel" role="tabpanel" hidden>
+          <h2 class="hand">Contacts</h2>
+          <p class="bit">Accounts, plus emails from issues and campaign sign-ups.</p>
+          <div id="admin-contacts"></div>
+        </div>
+
+        <div id="panel-donations" class="admin-panel" role="tabpanel" hidden>
+          <h2 class="hand">Donations</h2>
+          <form id="donation-form" class="issue-form form-box">
+            <div class="form-grid">
+              <input name="name" placeholder="Name" aria-label="Name" />
+              <input name="amount" required placeholder="Amount" aria-label="Amount" />
+            </div>
+            <input name="note" placeholder="Note (optional)" aria-label="Note optional" style="margin-top: 0.5rem" />
+            <button type="submit">Add</button>
+          </form>
+          <div id="admin-donations"></div>
+        </div>
+
+        <div id="panel-campaigns" class="admin-panel" role="tabpanel" hidden>
+          <h2 class="hand">Campaign sign-ups</h2>
+          <p class="bit">People who asked to get involved.</p>
+          <div id="admin-joins"></div>
+        </div>
+
+        <div id="panel-updates" class="admin-panel" role="tabpanel" hidden>
+          <h2 class="hand">Updates</h2>
+          <form id="update-form" class="issue-form form-box">
+            <input name="title" required placeholder="Title" aria-label="Title" />
+            <textarea name="body" required rows="3" placeholder="Details" aria-label="Details"></textarea>
+            <button type="submit">Post</button>
+          </form>
+          <div id="admin-updates"></div>
+        </div>
+
+        <div id="panel-events" class="admin-panel" role="tabpanel" hidden>
+          <h2 class="hand">Events</h2>
+          <form id="event-form" class="issue-form form-box">
+            <input name="title" required placeholder="Title" aria-label="Title" />
+            <div class="form-grid" style="margin-top: 0.5rem">
+              <input name="when" required placeholder="When" aria-label="When" />
+              <input name="where" placeholder="Where" aria-label="Where" />
+            </div>
+            <textarea name="body" rows="2" placeholder="Details (optional)" aria-label="Details optional"></textarea>
+            <button type="submit">Post</button>
+          </form>
+          <div id="admin-events"></div>
+        </div>
+
+        <div id="panel-polls" class="admin-panel" role="tabpanel" hidden>
+          <h2 class="hand">Polls</h2>
+          <form id="poll-form" class="issue-form form-box">
+            <input name="question" required placeholder="Question" aria-label="Question" />
+            <div id="option-fields" style="display: grid; gap: 0.35rem; margin-top: 0.5rem">
+              <input name="option" required placeholder="Option 1" aria-label="Option 1" />
+              <input name="option" required placeholder="Option 2" aria-label="Option 2" />
+            </div>
+            <button type="button" id="add-option" class="btn-ghost" style="margin-top: 0.5rem">Add option</button>
+            <button type="submit">Publish</button>
+          </form>
+          <div id="admin-polls"></div>
+        </div>
+      </div>
 
       <footer>
+        <div class="foot-contacts">
+          <div class="foot-contact">
+            <span class="foot-contact-label">Updates and involvement</span>
+            <a href="mailto:alexusghh@gmail.com">alexusghh@gmail.com</a>
+          </div>
+          <div class="foot-contact">
+            <span class="foot-contact-label">Partners</span>
+            <a href="mailto:alexandroghanem@gmail.com">alexandroghanem@gmail.com</a>
+          </div>
+        </div>
         Developed by <strong>Alexandro Ghanem</strong> ·
         <a href="https://ghanem.uk" target="_blank" rel="noopener noreferrer">ghanem.uk</a>
         <p class="disclaimer">Not associated with NYA or Bury Council.</p>
       </footer>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/config.js"></script>
-    <script src="js/store.js"></script>
-    <script>
-      const loginView = document.getElementById("login-view");
-      const dashView = document.getElementById("dash-view");
-      const optionFields = document.getElementById("option-fields");
-
-      function showDash() {
-        loginView.hidden = true;
-        dashView.hidden = false;
-        refresh();
-      }
-      function showLogin() {
-        dashView.hidden = true;
-        loginView.hidden = false;
-      }
-
-      if (BYC.isAdmin()) showDash();
-
-      document.getElementById("login-form").addEventListener("submit", (e) => {
-        e.preventDefault();
-        const err = document.getElementById("login-error");
-        if (BYC.login(document.getElementById("password").value)) {
-          err.hidden = true;
-          showDash();
-        } else err.hidden = false;
-      });
-
-      document.getElementById("logout-btn").addEventListener("click", () => {
-        BYC.logout();
-        showLogin();
-      });
-
-      document.getElementById("add-option").addEventListener("click", () => {
-        const n = optionFields.querySelectorAll("input").length + 1;
-        const i = document.createElement("input");
-        i.name = "option";
-        i.placeholder = "Option " + n;
-        optionFields.appendChild(i);
-      });
-
-      function bindSimpleForm(id, handler) {
-        document.getElementById(id).addEventListener("submit", async (e) => {
-          e.preventDefault();
-          await handler(new FormData(e.target));
-          e.target.reset();
-          refresh();
-        });
-      }
-
-      bindSimpleForm("update-form", (d) =>
-        BYC.addUpdate({ title: d.get("title"), body: d.get("body") })
-      );
-      bindSimpleForm("event-form", (d) =>
-        BYC.addEvent({
-          title: d.get("title"),
-          when: d.get("when"),
-          where: d.get("where"),
-          body: d.get("body"),
-        })
-      );
-      bindSimpleForm("donation-form", (d) =>
-        BYC.addDonation({
-          name: d.get("name"),
-          amount: d.get("amount"),
-          note: d.get("note"),
-        })
-      );
-
-      document.getElementById("poll-form").addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const data = new FormData(e.target);
-        const options = data.getAll("option");
-        if (options.filter((o) => String(o).trim()).length < 2) return;
-        await BYC.createPoll({ question: data.get("question"), options });
-        e.target.reset();
-        optionFields.innerHTML =
-          '<input name="option" required placeholder="Option 1" /><input name="option" required placeholder="Option 2" />';
-        refresh();
-      });
-
-      function esc(s) {
-        return String(s)
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;");
-      }
-
-      function when(iso) {
-        try {
-          return new Date(iso).toLocaleString("en-GB", { dateStyle: "medium", timeStyle: "short" });
-        } catch {
-          return iso;
-        }
-      }
-
-      function listCards(items, render) {
-        return (
-          items
-            .map(
-              (item) => `<article class="card">${render(item)}
-                <div class="row" style="margin-top:0.45rem">
-                  <button type="button" class="btn-bad del" data-id="${item.id}">delete</button>
-                </div>
-              </article>`
-            )
-            .join("") || '<p class="muted">None.</p>'
-        );
-      }
-
-      function wireDeletes(root, fn) {
-        root.querySelectorAll(".del").forEach((b) =>
-          b.addEventListener("click", async () => {
-            if (confirm("Delete?")) {
-              await fn(b.dataset.id);
-              refresh();
-            }
-          })
-        );
-      }
-
-      async function refresh() {
-        const suggestions = await BYC.getSuggestions();
-        const polls = await BYC.getPolls();
-        let votes = 0;
-        for (const p of polls) {
-          votes += (await BYC.voteTotals(p.id)).total;
-        }
-
-        document.getElementById("stat-suggestions").textContent = suggestions.length;
-        document.getElementById("stat-polls").textContent = polls.filter((p) => p.active).length;
-        document.getElementById("stat-votes").textContent = votes;
-
-        const updatesEl = document.getElementById("admin-updates");
-        updatesEl.innerHTML = listCards(
-          await BYC.getUpdates(),
-          (u) => `<h3>${esc(u.title)}</h3><p class="msg">${esc(u.body)}</p>`
-        );
-        wireDeletes(updatesEl, BYC.deleteUpdate);
-
-        const eventsEl = document.getElementById("admin-events");
-        eventsEl.innerHTML = listCards(
-          await BYC.getEvents(),
-          (ev) =>
-            `<h3>${esc(ev.title)}</h3><p class="meta">${esc(ev.when)}${ev.where ? " · " + esc(ev.where) : ""}</p><p class="msg">${esc(ev.body)}</p>`
-        );
-        wireDeletes(eventsEl, BYC.deleteEvent);
-
-        const donationsEl = document.getElementById("admin-donations");
-        donationsEl.innerHTML = listCards(
-          await BYC.getDonations(),
-          (d) =>
-            `<h3>${esc(d.name)} · ${esc(d.amount)}</h3>${d.note ? `<p class="msg">${esc(d.note)}</p>` : ""}`
-        );
-        wireDeletes(donationsEl, BYC.deleteDonation);
-
-        const joinsEl = document.getElementById("admin-joins");
-        joinsEl.innerHTML = listCards(
-          await BYC.getJoins(),
-          (j) =>
-            `<h3>${esc(j.name)}</h3>
-             <p class="meta">${esc(j.cause)} · ${when(j.createdAt)}</p>
-             <p class="meta">${j.email ? `<a href="mailto:${esc(j.email)}">${esc(j.email)}</a>` : "no email"}</p>
-             ${j.note ? `<p class="msg">${esc(j.note)}</p>` : ""}`
-        );
-        wireDeletes(joinsEl, BYC.deleteJoin);
-
-        const pollsEl = document.getElementById("admin-polls");
-        const pollCards = [];
-        for (const poll of polls) {
-          const { tally, total } = await BYC.voteTotals(poll.id);
-          const rows = poll.options
-            .map((o) => {
-              const c = tally[o.id] || 0;
-              const pct = total ? Math.round((c / total) * 100) : 0;
-              return `<li><span>${esc(o.label)}</span><span>${c} (${pct}%)</span></li>`;
-            })
-            .join("");
-          pollCards.push(`<article class="card">
-                <h3>${esc(poll.question)}</h3>
-                <p class="meta">${when(poll.createdAt)} · ${total} votes · ${poll.active ? "open" : "closed"}</p>
-                <div class="row">
-                  <button type="button" class="btn-ghost toggle-poll" data-id="${poll.id}" data-on="${poll.active}">${poll.active ? "close" : "reopen"}</button>
-                  <button type="button" class="btn-bad del-poll" data-id="${poll.id}">delete</button>
-                </div>
-                <ul>${rows}</ul>
-              </article>`);
-        }
-        pollsEl.innerHTML = pollCards.join("") || '<p class="muted">No polls.</p>';
-
-        pollsEl.querySelectorAll(".toggle-poll").forEach((b) =>
-          b.addEventListener("click", async () => {
-            await BYC.setPollActive(b.dataset.id, b.dataset.on !== "true");
-            refresh();
-          })
-        );
-        pollsEl.querySelectorAll(".del-poll").forEach((b) =>
-          b.addEventListener("click", async () => {
-            if (confirm("Delete poll?")) {
-              await BYC.deletePoll(b.dataset.id);
-              refresh();
-            }
-          })
-        );
-
-        const sugEl = document.getElementById("admin-suggestions");
-        document.getElementById("suggestions-empty").hidden = suggestions.length > 0;
-        sugEl.innerHTML = suggestions
-          .map(
-            (s) => `<article class="card">
-              <h3>${esc(s.name)}</h3>
-              <p class="meta">${esc(s.topic)} · ${esc(s.area)} · ${when(s.createdAt)} · ${esc(s.status)}</p>
-              <p class="meta">${s.email ? `<a href="mailto:${esc(s.email)}">${esc(s.email)}</a>` : "no email"}</p>
-              <p class="msg">${esc(s.message)}</p>
-              <div class="row">
-                <button type="button" class="btn-ghost status-btn" data-id="${s.id}" data-v="reviewed">reviewed</button>
-                <button type="button" class="status-btn" data-id="${s.id}" data-v="forwarded">for council</button>
-                <button type="button" class="btn-bad del-sug" data-id="${s.id}">delete</button>
-              </div>
-            </article>`
-          )
-          .join("");
-
-        sugEl.querySelectorAll(".status-btn").forEach((b) =>
-          b.addEventListener("click", async () => {
-            await BYC.updateSuggestionStatus(b.dataset.id, b.dataset.v);
-            refresh();
-          })
-        );
-        sugEl.querySelectorAll(".del-sug").forEach((b) =>
-          b.addEventListener("click", async () => {
-            if (confirm("Delete?")) {
-              await BYC.deleteSuggestion(b.dataset.id);
-              refresh();
-            }
-          })
-        );
-      }
-    </script>
+    <script src="js/boot.js" defer></script>
+    <script src="js/admin.js" defer></script>
   </body>
 </html>

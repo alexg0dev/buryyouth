@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Login | Save Our Youth</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/site.css" />
+  </head>
+  <body>
+    <div class="page">
+      <a class="back" href="index.html">← Home</a>
+      <header>
+        <p class="campaign">Save Our Youth</p>
+        <h1 class="hand">Account</h1>
+        <p class="bit">Email and password.</p>
+        <nav class="top-actions" aria-label="Site">
+          <a href="index.html">Home</a>
+          <a href="campaigns.html">Campaigns</a>
+          <a href="updates.html">Updates</a>
+          <a href="events.html">Events</a>
+        </nav>
+      </header>
+
+      <div id="logged-out" class="auth-box">
+        <div class="auth-tabs" role="tablist" aria-label="Account">
+          <button type="button" class="auth-tab is-active" id="tab-login" role="tab" aria-selected="true">
+            Log in
+          </button>
+          <button type="button" class="auth-tab" id="tab-signup" role="tab" aria-selected="false">
+            Create an account
+          </button>
+        </div>
+
+        <h2 class="hand" id="auth-title">Log in</h2>
+        <p class="bit" id="auth-hint">Email and password.</p>
+        <form id="login-form" class="issue-form" method="post" action="#">
+          <input name="email" type="email" required autocomplete="email" placeholder="Email" aria-label="Email" />
+          <input
+            name="password"
+            type="password"
+            required
+            minlength="6"
+            autocomplete="current-password"
+            placeholder="Password"
+            aria-label="Password"
+            style="margin-top: 0.5rem"
+          />
+          <div id="signup-extra" hidden>
+            <label class="field-label" for="signup-town">Town</label>
+            <select id="signup-town" name="town" aria-label="Town">
+              <option value="" disabled selected>Where in Bury?</option>
+              <option>Radcliffe</option>
+              <option>Tottington</option>
+              <option>Bury</option>
+              <option>Ramsbottom</option>
+              <option>Whitefield</option>
+            </select>
+            <label class="field-label" for="signup-age">Age</label>
+            <select id="signup-age" name="under_18" aria-label="Age">
+              <option value="" disabled selected>Select</option>
+              <option value="true">Under 18</option>
+              <option value="false">Over 18</option>
+            </select>
+          </div>
+          <button type="submit" id="auth-submit">Log in</button>
+        </form>
+        <p id="login-status" class="status" hidden></p>
+      </div>
+
+      <div id="logged-in" class="auth-box auth-ok" hidden>
+        <h2 class="hand">You're signed in</h2>
+        <p class="bit">Logged in as <strong id="user-email"></strong></p>
+
+        <form id="profile-form" class="issue-form profile-form" method="post" action="#">
+          <label class="field-label" for="profile-town">Town</label>
+          <select id="profile-town" name="town" required aria-label="Town">
+            <option value="" disabled selected>Where in Bury?</option>
+            <option>Radcliffe</option>
+            <option>Tottington</option>
+            <option>Bury</option>
+            <option>Ramsbottom</option>
+            <option>Whitefield</option>
+          </select>
+          <label class="field-label" for="profile-age">Age</label>
+          <select id="profile-age" name="under_18" required aria-label="Age">
+            <option value="" disabled selected>Select</option>
+            <option value="true">Under 18</option>
+            <option value="false">Over 18</option>
+          </select>
+          <p id="vote-elig" class="bit"></p>
+          <button type="submit">Save</button>
+          <p id="profile-status" class="status" hidden></p>
+        </form>
+
+        <button type="button" id="logout-btn" class="donate" style="border: 2px solid #111; cursor: pointer">Sign out</button>
+
+        <section id="billing-panel" class="stripe-panel" hidden>
+          <h2 class="hand">Billing</h2>
+          <p class="bit">Update your card or cancel anytime.</p>
+          <a
+            id="stripe-portal"
+            class="donate stripe-btn"
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
+            hidden
+            >Manage billing</a
+          >
+        </section>
+      </div>
+
+      <p class="quiet-link"><a href="admin.html">Admin</a></p>
+
+      <p id="auth-setup-notice" class="setup-notice" hidden>
+        Accounts aren't ready yet. You can still send issues and get involved without logging in.
+      </p>
+
+      <footer>
+        <p class="foot-donate">
+          <a class="donate" href="donations.html">Donate</a>
+        </p>
+        <div class="foot-contacts">
+          <div class="foot-contact">
+            <span class="foot-contact-label">Updates and involvement</span>
+            <a href="mailto:alexusghh@gmail.com">alexusghh@gmail.com</a>
+          </div>
+          <div class="foot-contact">
+            <span class="foot-contact-label">Partners</span>
+            <a href="mailto:alexandroghanem@gmail.com">alexandroghanem@gmail.com</a>
+          </div>
+        </div>
+        <p class="disclaimer">Not associated with NYA or Bury Council.</p>
+      </footer>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/boot.js" defer></script>
+    <script src="js/auth.js" defer></script>
+  </body>
+</html>

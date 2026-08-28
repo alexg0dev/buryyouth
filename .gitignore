@@ -7,9 +7,10 @@
 *.swp
 *~
 
-# Env / secrets
+# Env / secrets — never commit real keys
 .env
 .env.*
+!.env.example
 
 # Logs
 *.log

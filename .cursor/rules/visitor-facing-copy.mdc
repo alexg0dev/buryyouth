@@ -1,0 +1,32 @@
+---
+description: Global UI and microcopy rules — always apply before any change
+alwaysApply: true
+---
+
+# GLOBAL UI & MICROCOPY RULES
+
+Read this before changing HTML, JS strings shown in the browser, or any public copy.
+
+## 1. No Technical Provider Names in UI
+Never print technical tools, infrastructure, or backend services in user-facing text unless explicitly instructed to build a developer tech-stack page.
+- BAD: "Powered by Supabase", "Handled via Firebase Auth", "Secured with Stripe"
+- GOOD: "Sign in", "Secure Payment", "Encrypted Connection"
+
+## 2. Minimalist Form Microcopy
+Do not explain standard UX patterns to users. If a button or form field is standard, let the UI speak for itself.
+- BAD: "Click here to send us a message about your issue so we can review it."
+- GOOD: "Send message"
+- BAD: "Not required. Helps me with this individual project."
+- GOOD: "(optional)"
+
+## 3. No Meta-Commentary or Thought Dumping
+Never output internal reasoning, prompt restatements, or setup descriptions as visible text strings in components.
+- BAD: "Login page header - uses email and password"
+- BAD: "Placeholder for campaign choices"
+- GOOD: Leave text clean, using standard UI copy only.
+
+## 4. Professional Copy Defaults
+When writing default UI strings, write from the perspective of a polished consumer application:
+- Navigation: Use clean single words ("Home", "About", "Events", "Contact").
+- Buttons: Use concise action verbs ("Submit", "Join", "Save", "Continue").
+- Status Messages: Keep them brief and actionable ("Account created", "Check your email").

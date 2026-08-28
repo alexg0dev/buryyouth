@@ -6,10 +6,7 @@
     <title>Events — Save Our Youth</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="css/site.css" />
   </head>
   <body>
@@ -17,29 +14,39 @@
       <a class="back" href="index.html">← Home</a>
       <header>
         <p class="campaign">Save Our Youth</p>
-        <h1 class="hand" style="font-size: 2.2rem; margin: 0.5rem 0 0">Events</h1>
-        <p class="byline">
-          Handled by Member of Youth Parliament
-          <a href="https://ghanem.uk" target="_blank" rel="noopener noreferrer">Alexandro Ghanem</a>
-        </p>
+        <h1 class="hand">Events</h1>
+        <p class="bit">Campaigns &amp; meet-ups.</p>
+        <nav class="top-actions" aria-label="Site">
+          <a href="index.html">Home</a>
+          <a href="campaigns.html">Campaigns</a>
+          <a href="updates.html">Updates</a>
+          <a href="login.html">Login</a>
+        </nav>
       </header>
 
       <div id="events-list"></div>
 
       <footer>
-        <p>
-          <a href="index.html">Home</a> ·
-          <a href="updates.html">Updates</a> ·
-          <a href="https://ghanem.uk" target="_blank" rel="noopener noreferrer">ghanem.uk</a>
+        <p class="foot-donate">
+          <a class="donate" href="donations.html">Donate</a>
         </p>
+        <div class="foot-contacts">
+          <div class="foot-contact">
+            <span class="foot-contact-label">Updates and involvement</span>
+            <a href="mailto:alexusghh@gmail.com">alexusghh@gmail.com</a>
+          </div>
+          <div class="foot-contact">
+            <span class="foot-contact-label">Partners</span>
+            <a href="mailto:alexandroghanem@gmail.com">alexandroghanem@gmail.com</a>
+          </div>
+        </div>
         <p class="disclaimer">Not associated with NYA or Bury Council.</p>
       </footer>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/config.js"></script>
-    <script src="js/store.js"></script>
-    <script>
+    <script src="js/boot.js" defer></script>
+    <script defer>
       function esc(s) {
         return String(s)
           .replace(/&/g, "&amp;")
@@ -47,22 +54,28 @@
           .replace(/>/g, "&gt;")
           .replace(/"/g, "&quot;");
       }
-
-      (async () => {
-        const list = document.getElementById("events-list");
-        const items = await BYC.getEvents();
-        list.innerHTML = items.length
-          ? items
-              .map(
-                (ev) => `<article class="card">
-                  <h3>${esc(ev.title)}</h3>
-                  <p class="meta">${esc(ev.when)}${ev.where ? " · " + esc(ev.where) : ""}</p>
-                  <p>${esc(ev.body)}</p>
-                </article>`
-              )
-              .join("")
-          : `<p class="empty">No events posted yet.</p>`;
-      })();
+      document.addEventListener("DOMContentLoaded", function () {
+        BYC_READY.then(async function () {
+          const list = document.getElementById("events-list");
+          const items = await BYC.getEvents();
+          list.innerHTML = items.length
+            ? items
+                .map(function (ev) {
+                  return (
+                    '<article class="card"><h3>' +
+                    esc(ev.title) +
+                    "</h3><p class=\"meta\">" +
+                    esc(ev.when) +
+                    (ev.where ? " · " + esc(ev.where) : "") +
+                    '</p><p>' +
+                    esc(ev.body) +
+                    "</p></article>"
+                  );
+                })
+                .join("")
+            : '<p class="empty">No events posted yet.</p>';
+        });
+      });
     </script>
   </body>
 </html>

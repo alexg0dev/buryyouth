@@ -1,6 +1,9 @@
 /**
  * Save Our Youth data layer
- * Uses Supabase when window.BYC_SUPABASE is configured, otherwise localStorage.
+ * Uses the configured auth backend when window.BYC_SUPABASE is filled, otherwise localStorage.
+ *
+ * Passwords: never log or store them. They go only to signIn/signUp (hashed by the
+ * auth service). Use HTTPS in production. Do not put secrets in query strings.
  */
 (function (global) {
   const KEYS = {
@@ -13,17 +16,111 @@
     donations: "byc_donations",
     mentions: "byc_mentions",
     joins: "byc_joins",
+    profiles: "byc_profiles",
   };
 
   const ADMIN_PASSWORD = "8872";
   const POLL_QUESTION = "What should be prioritised for Bury's youth?";
+  const BURY_TOWNS = [
+    "Radcliffe",
+    "Tottington",
+    "Bury",
+    "Ramsbottom",
+    "Whitefield",
+  ];
+
+  function apiBase() {
+    const fromApi = String((global.BYC_API || {}).apiBase || "")
+      .trim()
+      .replace(/\/$/, "");
+    if (fromApi) return fromApi;
+    const checkout = String((global.BYC_STRIPE || {}).checkoutEndpoint || "")
+      .trim()
+      .replace(/\/$/, "");
+    if (checkout) return checkout.replace(/\/create-checkout$/i, "");
+    return "";
+  }
+
+  function voteUrl() {
+    const base = apiBase();
+    return base ? base + "/cast-vote" : "";
+  }
+
+  function isBuryTown(town) {
+    return BURY_TOWNS.indexOf(String(town || "").trim()) !== -1;
+  }
+
+  function ageFromDob(dob, now) {
+    const raw = String(dob || "").trim();
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(raw);
+    if (!m) return null;
+    const y = Number(m[1]);
+    const mo = Number(m[2]);
+    const d = Number(m[3]);
+    if (y < 1900 || mo < 1 || mo > 12 || d < 1 || d > 31) return null;
+    const today = now || new Date();
+    const ty = today.getFullYear();
+    const tmo = today.getMonth() + 1;
+    const td = today.getDate();
+    if (y > ty || (y === ty && (mo > tmo || (mo === tmo && d > td)))) return null;
+    let age = ty - y;
+    if (tmo < mo || (tmo === tmo && td < d)) age -= 1;
+    return age;
+  }
+
+  function parseUnder18Flag(value) {
+    if (value === true || value === "true") return true;
+    if (value === false || value === "false") return false;
+    return null;
+  }
+
+  function eligibilityFromProfile(profile) {
+    if (!profile) return { eligible: false, reason: "incomplete" };
+    const town = String(profile.town || "").trim();
+    const under18 = parseUnder18Flag(
+      profile.under18 != null ? profile.under18 : profile.under_18
+    );
+    if (!town || under18 == null) return { eligible: false, reason: "incomplete" };
+    if (!isBuryTown(town) || !under18) {
+      return { eligible: false, reason: "ineligible" };
+    }
+    return { eligible: true, reason: "" };
+  }
+
+  function normalizeDob(value) {
+    const raw = String(value || "").trim();
+    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(raw);
+    return m ? m[1] + "-" + m[2] + "-" + m[3] : "";
+  }
 
   const cfg = global.BYC_SUPABASE || {};
   const useSupabase = Boolean(cfg.url && cfg.anonKey && global.supabase);
 
+  // Implicit flow: confirmation links work even if opened on another device.
+  // Static site has no token-exchange endpoint for PKCE.
   let sb = null;
   if (useSupabase) {
-    sb = global.supabase.createClient(cfg.url, cfg.anonKey);
+    sb = global.supabase.createClient(cfg.url, cfg.anonKey, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+        flowType: "implicit",
+      },
+    });
+  }
+
+  function loginRedirectUrl() {
+    try {
+      const loc = global.location;
+      if (loc && (loc.protocol === "http:" || loc.protocol === "https:")) {
+        const origin = String(loc.origin || "").replace(/\/$/, "");
+        if (origin && origin !== "null") return origin + "/login.html";
+      }
+    } catch (e) {
+      // file:// or missing location — use the public site.
+    }
+    return "https://saveburyyouth.com/login.html";
   }
 
   function read(key, fallback) {
@@ -43,15 +140,6 @@
     return crypto.randomUUID
       ? crypto.randomUUID()
       : "id-" + Date.now() + "-" + Math.random().toString(36).slice(2, 9);
-  }
-
-  function voterKey() {
-    let key = localStorage.getItem("byc_voter_key");
-    if (!key) {
-      key = uid();
-      localStorage.setItem("byc_voter_key", key);
-    }
-    return key;
   }
 
   function seedIfEmpty(key, items) {
@@ -150,6 +238,17 @@
     );
   }
 
+  function listPatch(key, id, patch) {
+    let updated = null;
+    const next = read(key, []).map((x) => {
+      if (x.id !== id) return x;
+      updated = { ...x, ...patch };
+      return updated;
+    });
+    write(key, next);
+    return updated;
+  }
+
   function mapIssue(row) {
     return {
       id: row.id,
@@ -214,6 +313,17 @@
     };
   }
 
+  function mapProfile(row) {
+    return {
+      id: row.id,
+      email: row.email,
+      town: row.town || "",
+      dateOfBirth: normalizeDob(row.date_of_birth || row.dateOfBirth || ""),
+      under18: parseUnder18Flag(row.under_18 != null ? row.under_18 : row.under18),
+      createdAt: row.created_at,
+    };
+  }
+
   const localStore = {
     async getSuggestions() {
       return listGet(KEYS.suggestions);
@@ -250,6 +360,12 @@
     async deleteUpdate(id) {
       listDelete(KEYS.updates, id);
     },
+    async updateUpdate({ id, title, body }) {
+      return listPatch(KEYS.updates, id, {
+        title: String(title || "").trim(),
+        body: String(body || "").trim(),
+      });
+    },
     async getEvents() {
       return listGet(KEYS.events);
     },
@@ -264,6 +380,14 @@
     async deleteEvent(id) {
       listDelete(KEYS.events, id);
     },
+    async updateEvent({ id, title, when, where, body }) {
+      return listPatch(KEYS.events, id, {
+        title: String(title || "").trim(),
+        when: String(when || "").trim(),
+        where: String(where || "").trim(),
+        body: String(body || "").trim(),
+      });
+    },
     async getDonations() {
       return listGet(KEYS.donations);
     },
@@ -276,6 +400,13 @@
     },
     async deleteDonation(id) {
       listDelete(KEYS.donations, id);
+    },
+    async updateDonation({ id, name, amount, note }) {
+      return listPatch(KEYS.donations, id, {
+        name: String(name || "Anonymous").trim() || "Anonymous",
+        amount: String(amount || "").trim(),
+        note: String(note || "").trim(),
+      });
     },
     async getJoins() {
       return listGet(KEYS.joins);
@@ -290,6 +421,48 @@
     },
     async deleteJoin(id) {
       listDelete(KEYS.joins, id);
+    },
+    async getProfiles() {
+      return listGet(KEYS.profiles);
+    },
+    async getOwnProfile(userId) {
+      if (!userId) return null;
+      return read(KEYS.profiles, []).find((p) => p.id === userId) || null;
+    },
+    async upsertProfile({ id, email, town, dateOfBirth, under18 }) {
+      const emailNorm = String(email || "").trim();
+      if (!emailNorm) return null;
+      const list = read(KEYS.profiles, []);
+      const emailKey = emailNorm.toLowerCase();
+      const existing =
+        (id && list.find((p) => p.id === id)) ||
+        list.find((p) => String(p.email || "").toLowerCase() === emailKey);
+      const townVal = town !== undefined ? String(town || "").trim() : "";
+      const dobVal = dateOfBirth !== undefined ? normalizeDob(dateOfBirth) : "";
+      const underVal = under18 !== undefined ? parseUnder18Flag(under18) : null;
+      if (existing) {
+        existing.email = emailNorm;
+        if (id) existing.id = id;
+        if (town !== undefined) existing.town = townVal;
+        if (dateOfBirth !== undefined) existing.dateOfBirth = dobVal;
+        if (under18 !== undefined) existing.under18 = underVal;
+        write(KEYS.profiles, list);
+        return existing;
+      }
+      const row = {
+        id: id || uid(),
+        email: emailNorm,
+        town: townVal,
+        dateOfBirth: dobVal,
+        under18: underVal,
+        createdAt: new Date().toISOString(),
+      };
+      list.push(row);
+      write(KEYS.profiles, list);
+      return row;
+    },
+    async deleteProfile(id) {
+      listDelete(KEYS.profiles, id);
     },
     async getPolls() {
       return listGet(KEYS.polls);
@@ -322,11 +495,11 @@
     async getVotes(pollId) {
       return read(KEYS.votes, {})[pollId] || {};
     },
-    hasVoted(pollId) {
-      return Boolean(localStorage.getItem("byc_voted_" + pollId));
+    async hasVoted(pollId) {
+      return false;
     },
     async castVote(pollId, optionId) {
-      if (localStore.hasVoted(pollId)) return { ok: false, reason: "already" };
+      if (await localStore.hasVoted(pollId)) return { ok: false, reason: "already" };
       const poll = (await localStore.getPolls()).find((p) => p.id === pollId);
       if (!poll || !poll.active) return { ok: false, reason: "closed" };
       if (!poll.options.some((o) => o.id === optionId)) {
@@ -401,6 +574,19 @@
       const { error } = await sb.from("updates").delete().eq("id", id);
       if (error) throw error;
     },
+    async updateUpdate({ id, title, body }) {
+      const { data, error } = await sb
+        .from("updates")
+        .update({
+          title: String(title || "").trim(),
+          body: String(body || "").trim(),
+        })
+        .eq("id", id)
+        .select()
+        .single();
+      if (error) throw error;
+      return mapUpdate(data);
+    },
     async getEvents() {
       const { data, error } = await sb
         .from("events")
@@ -427,6 +613,21 @@
       const { error } = await sb.from("events").delete().eq("id", id);
       if (error) throw error;
     },
+    async updateEvent({ id, title, when, where, body }) {
+      const { data, error } = await sb
+        .from("events")
+        .update({
+          title: String(title || "").trim(),
+          event_when: String(when || "").trim(),
+          event_where: String(where || "").trim(),
+          body: String(body || "").trim(),
+        })
+        .eq("id", id)
+        .select()
+        .single();
+      if (error) throw error;
+      return mapEvent(data);
+    },
     async getDonations() {
       const { data, error } = await sb
         .from("donations")
@@ -452,6 +653,20 @@
       const { error } = await sb.from("donations").delete().eq("id", id);
       if (error) throw error;
     },
+    async updateDonation({ id, name, amount, note }) {
+      const { data, error } = await sb
+        .from("donations")
+        .update({
+          name: String(name || "Anonymous").trim() || "Anonymous",
+          amount: String(amount || "").trim(),
+          note: String(note || "").trim(),
+        })
+        .eq("id", id)
+        .select()
+        .single();
+      if (error) throw error;
+      return mapDonation(data);
+    },
     async getJoins() {
       const { data, error } = await sb
         .from("joins")
@@ -476,6 +691,66 @@
     },
     async deleteJoin(id) {
       const { error } = await sb.from("joins").delete().eq("id", id);
+      if (error) throw error;
+    },
+    async getProfiles() {
+      let query = await sb
+        .from("profiles_directory")
+        .select("id, email, town, created_at")
+        .order("created_at", { ascending: false });
+      if (query.error) {
+        query = await sb
+          .from("profiles")
+          .select("id, email, town, created_at")
+          .order("created_at", { ascending: false });
+      }
+      if (query.error) throw query.error;
+      return (query.data || []).map(mapProfile);
+    },
+    async getOwnProfile() {
+      const user = await supabaseStore.getUser();
+      if (!user) return null;
+      let query = await sb
+        .from("profiles")
+        .select("id, email, town, date_of_birth, under_18, created_at")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (query.error) {
+        query = await sb
+          .from("profiles")
+          .select("id, email, town, date_of_birth, created_at")
+          .eq("id", user.id)
+          .maybeSingle();
+      }
+      if (query.error) throw query.error;
+      return query.data ? mapProfile(query.data) : null;
+    },
+    async upsertProfile({ id, email, town, dateOfBirth, under18 }) {
+      const emailNorm = String(email || "").trim();
+      if (!emailNorm) return null;
+      let profileId = id;
+      if (!profileId) {
+        const user = await supabaseStore.getUser();
+        if (user) profileId = user.id;
+      }
+      if (!profileId) return null;
+      const row = { id: profileId, email: emailNorm };
+      if (town !== undefined) {
+        const t = String(town || "").trim();
+        row.town = t && isBuryTown(t) ? t : null;
+      }
+      if (dateOfBirth !== undefined) {
+        row.date_of_birth = normalizeDob(dateOfBirth) || null;
+      }
+      if (under18 !== undefined) {
+        row.under_18 = parseUnder18Flag(under18);
+      }
+      const { data, error } = await sb.from("profiles").upsert(row).select().single();
+      if (error) throw error;
+      return mapProfile(data);
+    },
+    async deleteProfile(id) {
+      const { error } = await sb.from("profiles").delete().eq("id", id);
       if (error) throw error;
     },
     async getPolls() {
@@ -519,25 +794,21 @@
       });
       return tally;
     },
-    hasVoted(pollId) {
-      return Boolean(localStorage.getItem("byc_voted_" + pollId));
+    async getUser() {
+      const { data } = await sb.auth.getSession();
+      return data.session ? data.session.user : null;
     },
-    async castVote(pollId, optionId) {
-      if (supabaseStore.hasVoted(pollId)) return { ok: false, reason: "already" };
-      const { error } = await sb.from("votes").insert({
-        poll_id: pollId,
-        option_id: optionId,
-        voter_key: voterKey(),
-      });
-      if (error) {
-        if (String(error.message || "").includes("duplicate")) {
-          return { ok: false, reason: "already" };
-        }
-        throw error;
-      }
-      localStorage.setItem("byc_voted_" + pollId, optionId);
-      const tally = await supabaseStore.getVotes(pollId);
-      return { ok: true, tally };
+    async hasVoted(pollId) {
+      const user = await supabaseStore.getUser();
+      if (!user) return false;
+      const { data, error } = await sb
+        .from("votes")
+        .select("id")
+        .eq("poll_id", pollId)
+        .eq("voter_key", user.id)
+        .maybeSingle();
+      if (error) throw error;
+      return Boolean(data);
     },
     async voteTotals(pollId) {
       const tally = await supabaseStore.getVotes(pollId);
@@ -549,7 +820,6 @@
   const data = useSupabase ? supabaseStore : localStore;
 
   const store = {
-    ADMIN_PASSWORD,
     usingSupabase: useSupabase,
 
     isAdmin() {
@@ -566,30 +836,165 @@
       sessionStorage.removeItem(KEYS.session);
     },
 
+    async getUser() {
+      if (!sb) return null;
+      const { data } = await sb.auth.getSession();
+      return data.session ? data.session.user : null;
+    },
+    async getAccessToken() {
+      if (!sb) return null;
+      const { data } = await sb.auth.getSession();
+      return data.session && data.session.access_token
+        ? data.session.access_token
+        : null;
+    },
+    async getOwnProfile() {
+      if (useSupabase && supabaseStore.getOwnProfile) {
+        return supabaseStore.getOwnProfile();
+      }
+      return null;
+    },
+    async getVoteEligibility() {
+      const base = apiBase();
+      if (!base) return { configured: false, eligible: false, reason: "unavailable" };
+      const token = await store.getAccessToken();
+      if (!token) return { configured: true, eligible: false, reason: "login" };
+      try {
+        const res = await fetch(base + "/vote-eligibility", {
+          headers: { Authorization: "Bearer " + token },
+        });
+        const body = await res.json().catch(function () {
+          return {};
+        });
+        if (res.status === 401) {
+          return { configured: true, eligible: false, reason: "login" };
+        }
+        if (!res.ok) {
+          return {
+            configured: true,
+            eligible: false,
+            reason: body.error || "unavailable",
+          };
+        }
+        return {
+          configured: true,
+          eligible: Boolean(body.eligible),
+          reason: body.reason || "",
+        };
+      } catch (e) {
+        return { configured: true, eligible: false, reason: "unavailable" };
+      }
+    },
+    towns: BURY_TOWNS.slice(),
+    isBuryTown: isBuryTown,
+    ageFromDob: ageFromDob,
+    eligibilityFromProfile: eligibilityFromProfile,
+    apiBase: apiBase,
+    async signIn(email, password) {
+      if (!sb) return { error: { message: "Accounts aren't ready yet." } };
+      const emailNorm = String(email || "").trim();
+      if (!emailNorm || !password) {
+        return { error: { message: "Enter your email and password." } };
+      }
+      return sb.auth.signInWithPassword({ email: emailNorm, password });
+    },
+    async signUp(email, password, extra) {
+      if (!sb) return { error: { message: "Accounts aren't ready yet." } };
+      const emailNorm = String(email || "").trim();
+      if (!emailNorm || !password) {
+        return { error: { message: "Enter your email and password." } };
+      }
+      const meta = {};
+      if (extra && extra.town) meta.town = String(extra.town).trim();
+      if (extra && extra.under18 !== undefined) {
+        const flag = parseUnder18Flag(extra.under18);
+        if (flag != null) meta.under_18 = flag;
+      }
+      return sb.auth.signUp({
+        email: emailNorm,
+        password,
+        options: {
+          emailRedirectTo: loginRedirectUrl(),
+          data: meta,
+        },
+      });
+    },
+    async signOut() {
+      if (!sb) return;
+      return sb.auth.signOut();
+    },
+    onAuthChange(fn) {
+      if (!sb) return { data: { subscription: { unsubscribe: function () {} } } };
+      return sb.auth.onAuthStateChange(function (event, session) {
+        fn(event, session);
+      });
+    },
+
     getSuggestions: (...a) => data.getSuggestions(...a),
     addSuggestion: (...a) => data.addSuggestion(...a),
     updateSuggestionStatus: (...a) => data.updateSuggestionStatus(...a),
     deleteSuggestion: (...a) => data.deleteSuggestion(...a),
     getUpdates: (...a) => data.getUpdates(...a),
     addUpdate: (...a) => data.addUpdate(...a),
+    updateUpdate: (...a) => data.updateUpdate(...a),
     deleteUpdate: (...a) => data.deleteUpdate(...a),
     getEvents: (...a) => data.getEvents(...a),
     addEvent: (...a) => data.addEvent(...a),
+    updateEvent: (...a) => data.updateEvent(...a),
     deleteEvent: (...a) => data.deleteEvent(...a),
     getDonations: (...a) => data.getDonations(...a),
     addDonation: (...a) => data.addDonation(...a),
+    updateDonation: (...a) => data.updateDonation(...a),
     deleteDonation: (...a) => data.deleteDonation(...a),
     getJoins: (...a) => data.getJoins(...a),
     addJoin: (...a) => data.addJoin(...a),
     deleteJoin: (...a) => data.deleteJoin(...a),
+    getProfiles: (...a) => data.getProfiles(...a),
+    upsertProfile: (...a) => data.upsertProfile(...a),
+    deleteProfile: (...a) => data.deleteProfile(...a),
     getPolls: (...a) => data.getPolls(...a),
     getActivePolls: (...a) => data.getActivePolls(...a),
     createPoll: (...a) => data.createPoll(...a),
     setPollActive: (...a) => data.setPollActive(...a),
     deletePoll: (...a) => data.deletePoll(...a),
     getVotes: (...a) => data.getVotes(...a),
-    hasVoted: (...a) => data.hasVoted(...a),
-    castVote: (...a) => data.castVote(...a),
+    hasVoted: (...a) =>
+      data.hasVoted(...a).catch(function () {
+        return false;
+      }),
+    async castVote(pollId, optionId) {
+      const url = voteUrl();
+      if (!url) return { ok: false, reason: "unavailable" };
+      const token = await store.getAccessToken();
+      if (!token) return { ok: false, reason: "login" };
+      try {
+        const res = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+          body: JSON.stringify({ pollId: pollId, optionId: optionId }),
+        });
+        const body = await res.json().catch(function () {
+          return {};
+        });
+        if (!res.ok) {
+          const err = String(body.error || "");
+          if (res.status === 401) return { ok: false, reason: "login" };
+          if (err === "ineligible") return { ok: false, reason: "ineligible" };
+          if (err === "already") return { ok: false, reason: "already" };
+          if (err === "closed") return { ok: false, reason: "closed" };
+          if (err === "invalid" || err === "bad_request") {
+            return { ok: false, reason: "invalid" };
+          }
+          return { ok: false, reason: "unavailable" };
+        }
+        return { ok: true, tally: body.tally || {} };
+      } catch (e) {
+        return { ok: false, reason: "unavailable" };
+      }
+    },
     voteTotals: (...a) => data.voteTotals(...a),
   };
 

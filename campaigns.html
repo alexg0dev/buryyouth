@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Campaigns | Save Our Youth</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/site.css" />
+  </head>
+  <body>
+    <div class="page">
+      <a class="back" href="index.html">← Home</a>
+      <header>
+        <p class="campaign">Save Our Youth</p>
+        <h1 class="hand">Campaigns</h1>
+        <p class="bit">Join in, or have your say on a poll.</p>
+        <nav class="top-actions" aria-label="Site">
+          <a href="index.html">Home</a>
+          <a href="updates.html">Updates</a>
+          <a href="events.html">Events</a>
+          <a href="login.html">Login</a>
+        </nav>
+      </header>
+
+      <section id="involve" class="involve">
+        <h2 class="hand">Get involved</h2>
+        <p class="bit">Pick what matters and we'll get you involved in changing Bury.</p>
+
+        <form id="join-form" class="join-form" method="post" action="#">
+          <details class="cause-picker">
+            <summary>What are you campaigning for?</summary>
+            <div class="cause-list" role="radiogroup" aria-label="Campaign issue">
+              <label><input type="radio" name="cause" value="Employment &amp; Apprenticeships" required /> Employment &amp; Apprenticeships</label>
+              <label><input type="radio" name="cause" value="Education" /> Education</label>
+              <label><input type="radio" name="cause" value="Mental Health" /> Mental Health</label>
+              <label><input type="radio" name="cause" value="Youth Safety &amp; Knife Crime" /> Youth Safety &amp; Knife Crime</label>
+              <label><input type="radio" name="cause" value="Crime &amp; Anti-Social Behaviour" /> Crime &amp; Anti-Social Behaviour</label>
+              <label><input type="radio" name="cause" value="Youth Services" /> Youth Services</label>
+              <label><input type="radio" name="cause" value="Sports &amp; Activities" /> Sports &amp; Activities</label>
+              <label><input type="radio" name="cause" value="Transport" /> Transport</label>
+              <label><input type="radio" name="cause" value="Cost of Living" /> Cost of Living</label>
+              <label><input type="radio" name="cause" value="Housing &amp; Homelessness" /> Housing &amp; Homelessness</label>
+              <label><input type="radio" name="cause" value="SEND &amp; Accessibility" /> SEND &amp; Accessibility</label>
+              <label><input type="radio" name="cause" value="Equality &amp; Inclusion" /> Equality &amp; Inclusion</label>
+              <label><input type="radio" name="cause" value="Drugs &amp; Substance Misuse" /> Drugs &amp; Substance Misuse</label>
+              <label><input type="radio" name="cause" value="Online Safety" /> Online Safety</label>
+              <label><input type="radio" name="cause" value="Environment" /> Environment</label>
+              <label><input type="radio" name="cause" value="Town Centres &amp; Community Spaces" /> Town Centres &amp; Community Spaces</label>
+              <label><input type="radio" name="cause" value="Arts, Music &amp; Culture" /> Arts, Music &amp; Culture</label>
+              <label><input type="radio" name="cause" value="Young People's Voice &amp; Politics" /> Young People's Voice &amp; Politics</label>
+              <label><input type="radio" name="cause" value="Skills &amp; Training" /> Skills &amp; Training</label>
+              <label><input type="radio" name="cause" value="Volunteering &amp; Community" /> Volunteering &amp; Community</label>
+              <label><input type="radio" name="cause" value="Health &amp; Wellbeing" /> Health &amp; Wellbeing</label>
+              <label><input type="radio" name="cause" value="Youth Facilities &amp; Safe Spaces" /> Youth Facilities &amp; Safe Spaces</label>
+              <label><input type="radio" name="cause" value="Local Development &amp; Planning" /> Local Development &amp; Planning</label>
+              <label><input type="radio" name="cause" value="Other / Suggest an Issue" /> Other / Suggest an Issue</label>
+            </div>
+          </details>
+
+          <div class="form-grid join-fields">
+            <input name="name" type="text" placeholder="Your name" required autocomplete="name" />
+            <input name="email" type="email" placeholder="Your email" required autocomplete="email" />
+          </div>
+          <textarea name="note" placeholder="Anything else? (optional)" rows="2"></textarea>
+          <button type="submit">Join in</button>
+          <p id="join-status" class="status" hidden></p>
+        </form>
+      </section>
+
+      <section id="polls">
+        <h2 class="hand">Polls</h2>
+        <p id="polls-login-hint" class="bit" hidden>
+          <a href="login.html">Log in</a> to vote. Polls are for under-18s in Bury.
+        </p>
+        <p id="polls-ineligible" class="bit" hidden>
+          Polls are for under-18s in Bury. <a href="login.html">Account</a>
+        </p>
+        <p id="polls-status" class="status" hidden></p>
+        <div id="polls-list"></div>
+        <p id="polls-empty" class="empty" hidden>No open polls right now.</p>
+      </section>
+
+      <footer>
+        <p class="foot-donate">
+          <a class="donate" href="donations.html">Donate</a>
+        </p>
+        <div class="foot-contacts">
+          <div class="foot-contact">
+            <span class="foot-contact-label">Updates and involvement</span>
+            <a href="mailto:alexusghh@gmail.com">alexusghh@gmail.com</a>
+          </div>
+          <div class="foot-contact">
+            <span class="foot-contact-label">Partners</span>
+            <a href="mailto:alexandroghanem@gmail.com">alexandroghanem@gmail.com</a>
+          </div>
+        </div>
+        <p class="disclaimer">Not associated with NYA or Bury Council.</p>
+      </footer>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/boot.js" defer></script>
+    <script src="js/app.js" defer></script>
+  </body>
+</html>
